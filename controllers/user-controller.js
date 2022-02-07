@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Thought } = require('../models');
 // const { db } = require('../models/Thought');
 
 const userController = {
@@ -10,7 +10,7 @@ const userController = {
                 console.log(dbUserData);
                 res.json(dbUserData);
             })
-            .cath(err => res.json(err));
+            .catch(err => res.json(err));
     },
 
     //Get all users
