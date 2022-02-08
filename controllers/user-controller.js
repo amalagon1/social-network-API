@@ -16,16 +16,26 @@ const userController = {
     //Get all users
     getAllUsers(req, res) {
         User.find({})
-            //populate thoughts
+            .populate({
+                path: 'thoughts',
+                select: '-__v'
+            })
+            .select('-__v')
             .then(dbUserData => res.json(dbUserData))
             .catch(err => {
-                console.log(err);
-                res.status(400).json(err)
+                console.log(err)
+                res.status(500).json(err)
             });
+        //populate thoughts
+        // .then(dbUserData => res.json(dbUserData))
+        // .catch(err => {
+        //     console.log(err);
+        //     res.status(400).json(err)
+        // });
 
     },
 
-    getUserById({ params, body }, res) {
+    getUserById({ params, }, res) {
         User.findOne({ _id: params.id })
             .populate({
                 path: 'thoughts',
@@ -34,6 +44,18 @@ const userController = {
             .populate({
                 path: 'friends',
                 select: '-__v'
+            })
+            .select('-__v')
+            .then(dbUserData => {
+                if (!dbUserData) {
+                    res.status(404).json({ message: 'No user with this id!' });
+                    return;
+                }
+                res.json(dbUserData)
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(400).json(err)
             })
 
     },
@@ -69,7 +91,7 @@ const userController = {
             { new: true }
         )
             .then(dbUserData => res.json(dbUserData))
-            .cath(err => res.json(err));
+            .catch(err => res.json(err));
     },
     //add friend
     addFriend({ params }, res) {
